@@ -1,90 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const openBtn = document.getElementById('open');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  
-  const titleInput = document.getElementById('titleInput');
-  const charCounter = document.getElementById('charCounter');
-  
-  const dropZone = document.getElementById('dropZone');
-  const fileInput = document.getElementById('fileInput');
-  const uploadPlaceholder = document.getElementById('uploadPlaceholder');
-  const cropperContainer = document.getElementById('cropperContainer');
-  const cropImage = document.getElementById('cropImage');
-  const resetCropBtn = document.getElementById('resetCropBtn');
-
-  let cropper = null;
-
-  // Открытие модального окна по клику на #open
-  openBtn.addEventListener('click', () => {
-    modalOverlay.classList.remove('hidden');
-  });
-
-  // Закрытие окна
-  const closeModal = () => {
-    modalOverlay.classList.add('hidden');
-  };
-
-  closeModalBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
-  });
-
-  // Счетчик символов для названия
-  titleInput.addEventListener('input', () => {
-    const currentLength = titleInput.value.length;
-    charCounter.textContent = `${currentLength} / 50`;
-    if (currentLength >= 50) {
-      charCounter.classList.add('text-red-400');
-    } else {
-      charCounter.classList.remove('text-red-400');
-    }
-  });
-
-  // Логика выбора и обрезки фото
-  dropZone.addEventListener('click', (e) => {
-    if (e.target !== resetCropBtn && !cropperContainer.contains(e.target)) {
-      fileInput.click();
-    }
-  });
-
-  fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        cropImage.src = event.target.result;
-        uploadPlaceholder.classList.add('hidden');
-        cropperContainer.classList.remove('hidden');
-
-        if (cropper) cropper.destroy();
-
-        // Инициализация Cropper 1:1
-        cropper = new Cropper(cropImage, {
-          aspectRatio: 1,
-          viewMode: 1,
-          autoCropArea: 1,
-          responsive: true
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Сброс загруженного фото
-  resetCropBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (cropper) cropper.destroy();
-    cropper = null;
-    fileInput.value = '';
-    cropImage.src = '';
-    cropperContainer.classList.add('hidden');
-    uploadPlaceholder.classList.remove('hidden');
-  });
-});
-
-
-document.addEventListener('DOMContentLoaded', () => {
   // ===== Конфигурация Supabase =====
   const SUPABASE_URL = 'https://uwuqsvlvptldeaesabif.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3dXFzdmx2cHRsZGVhZXNhYmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNzc0MTUsImV4cCI6MjEwNTY1MzQxNX0.FJPswfe83L57YprUJkSSeyi4u0RMvEXkhnCl9X76RWg';
@@ -153,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cropImage.src = '';
     photoChanged = false;
     cropperContainer.classList.add('hidden');
-    existingPhotoPreview.classList.add('hidden');
+    if (existingPhotoPreview) existingPhotoPreview.classList.add('hidden');
     uploadPlaceholder.classList.remove('hidden');
   }
 
@@ -176,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     linkInput.value = item.link || '';
     charCounter.textContent = `${titleInput.value.length} / 50`;
     resetPhotoUI();
-    if (item.photo_url) {
+    if (item.photo_url && existingPhotoPreview) {
       existingPhotoPreview.src = item.photo_url;
       existingPhotoPreview.classList.remove('hidden');
       uploadPlaceholder.classList.add('hidden');
@@ -217,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.onload = (event) => {
       cropImage.src = event.target.result;
       uploadPlaceholder.classList.add('hidden');
-      existingPhotoPreview.classList.add('hidden');
+      if (existingPhotoPreview) existingPhotoPreview.classList.add('hidden');
       cropperContainer.classList.remove('hidden');
       photoChanged = true;
 
@@ -336,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.addEventListener('mouseup', cancelPress);
       card.addEventListener('mouseleave', cancelPress);
       card.addEventListener('touchend', cancelPress);
+      card.addEventListener('touchmove', cancelPress);
 
       card.addEventListener('click', (e) => {
         if (e.target.closest('.delete-btn')) return;

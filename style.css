@@ -68,7 +68,7 @@ main{
         padding: 0 10px;
         box-sizing: border-box;
 
-        img#photo{
+        .photo{
             width: 54px;
             height: 54px;
             border-radius: 8px;
