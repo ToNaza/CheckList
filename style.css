@@ -30,12 +30,36 @@ header{
         margin: 7px;
     }
 
-    form{
+.search-form{
         position: absolute;
         top: 0;
         right: 0;
         margin: 10px;
-        
+
+        .select-box{
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+
+            background-color: rgba(255, 255, 255, 0.096);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 3px 34px 3px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+
+        .select-box option{
+            background-color: rgb(20, 20, 20);
+            color: white;
+        }
     }
 }
 
@@ -51,6 +75,7 @@ main{
     border-radius: 20px;
     height: 800px;
     padding-top: 10px;
+    overflow-y: auto;
 
     .block_r{
         margin: 10px auto 0;
@@ -198,26 +223,200 @@ footer{
 
 
 
+.modal-overlay{
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
 
+    &.hidden{
+        display: none;
+    }
 
-/* Кастомные стили для Cropper.js, чтобы подогнать под темную тему */
-.cropper-view-box,
-.cropper-face {
-  border-radius: 8px;
+    .modal-box{
+        background-color: rgb(31, 41, 55);
+        border: 1px solid rgb(55, 65, 81);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 28rem;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        position: relative;
+
+        .modal-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgb(55, 65, 81);
+            padding-bottom: 12px;
+
+            h3{
+                font-size: 20px;
+                font-weight: bold;
+                color: white;
+            }
+
+            .modal-close{
+                background: none;
+                border: none;
+                color: rgb(156, 163, 175);
+                font-size: 24px;
+                font-weight: bold;
+                line-height: 1;
+                cursor: pointer;
+
+                &:hover{
+                    color: white;
+                }
+            }
+        }
+
+        form{
+            .form-group{
+                margin-bottom: 16px;
+
+                &:last-of-type{
+                    margin-bottom: 24px;
+                }
+            }
+
+            .form-label-row{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 4px;
+            }
+
+            label{
+                font-size: 14px;
+                font-weight: 500;
+                color: rgb(209, 213, 219);
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            #charCounter{
+                font-size: 12px;
+                color: rgb(156, 163, 175);
+            }
+
+            #charCounter.limit-reached{
+                color: rgb(248, 113, 113);
+            }
+
+            input[type="text"],
+            input[type="number"],
+            input[type="url"]{
+                width: 100%;
+                background-color: rgb(17, 24, 39);
+                border: 1px solid rgb(55, 65, 81);
+                border-radius: 8px;
+                padding: 8px 12px;
+                color: white;
+                font-size: 15px;
+                outline: none;
+                transition: border-color 0.2s;
+
+                &:focus{
+                    border-color: rgb(99, 102, 241);
+                }
+            }
+
+            .drop-zone{
+                border: 2px dashed rgb(75, 85, 99);
+                border-radius: 12px;
+                padding: 16px;
+                text-align: center;
+                cursor: pointer;
+                transition: border-color 0.2s;
+
+                .existing-photo{
+                    max-height: 160px;
+                    margin: 0 auto;
+                    border-radius: 8px;
+                    display: block;
+                }
+
+                .existing-photo.hidden{
+                    display: none;
+                }
+
+                &:hover{
+                    border-color: rgb(99, 102, 241);
+                }
+
+                .upload-placeholder{
+                    padding: 8px 0;
+
+                    span{
+                        font-size: 14px;
+                        color: rgb(156, 163, 175);
+                    }
+                }
+
+                .existing-photo{
+                    max-height: 160px;
+                    margin: 0 auto;
+                    border-radius: 8px;
+                    display: block;
+                }
+
+                .cropper-container{
+                    .cropper-frame{
+                        max-height: 240px;
+                        overflow: hidden;
+                        border-radius: 8px;
+                        background-color: black;
+
+                        img{
+                            max-width: 100%;
+                            display: block;
+                        }
+                    }
+
+                    .undo-btn{
+                        margin-top: 8px;
+                        background: none;
+                        border: none;
+                        font-size: 12px;
+                        color: rgb(248, 113, 113);
+                        text-decoration: underline;
+                        cursor: pointer;
+
+                        &:hover{
+                            color: rgb(252, 165, 165);
+                        }
+                    }
+                }
+            }
+
+            .submit-btn{
+                width: 100%;
+                background-color: rgb(79, 70, 229);
+                color: white;
+                font-weight: 500;
+                padding: 10px;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.2s;
+
+                &:hover{
+                    background-color: rgb(99, 102, 241);
+                }
+            }
+        }
+    }
 }
 
-.cropper-line, .cropper-point {
-  background-color: #6366f1;
-}
-
-/* Стилизация полосы прокрутки при необходимости */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #111827;
-}
-::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 4px;
+.hidden{
+    display: none;
 }

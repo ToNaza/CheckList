@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
   titleInput.addEventListener('input', () => {
     const len = titleInput.value.length;
     charCounter.textContent = `${len} / 50`;
-    charCounter.classList.toggle('text-red-400', len >= 50);
+    charCounter.classList.toggle('limit-reached', len >= 50);
   });
 
   // ===== Выбор и кроп фото =====
@@ -370,3 +370,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===== Старт =====
   loadItems();
 });
+
+
