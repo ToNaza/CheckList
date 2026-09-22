@@ -160,16 +160,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ===== Загрузка фото в Storage =====
+  // ===== Загрузка фото через серверную функцию Vercel (обходит RLS) =====
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
   async function uploadPhoto(blob, itemId) {
     const path = `${userId}/${itemId}.jpg`;
-    const { error: uploadError } = await sb.storage
-      .from(BUCKET)
-      .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
-    if (uploadError) throw uploadError;
+    const base64 = await blobToBase64(blob);
 
-    const { data } = sb.storage.from(BUCKET).getPublicUrl(path);
-    return data.publicUrl;
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: base64, path })
+    });
+
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Upload failed');
+
+    return result.url;
   }
 
   // ===== Загрузка списка из Supabase =====
