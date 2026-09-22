@@ -195,3 +195,29 @@ footer{
             }
         }
 }
+
+
+
+
+
+/* Кастомные стили для Cropper.js, чтобы подогнать под темную тему */
+.cropper-view-box,
+.cropper-face {
+  border-radius: 8px;
+}
+
+.cropper-line, .cropper-point {
+  background-color: #6366f1;
+}
+
+/* Стилизация полосы прокрутки при необходимости */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
