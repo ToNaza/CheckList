@@ -12,10 +12,10 @@ API_URL = f'https://api.telegram.org/bot{BOT_TOKEN}'
 SITE_URL = 'https://wishlistsite.vercel.app'
 
 HELP_STEPS = [
-    f'{SITE_URL}/media/slide1.png',
-    f'{SITE_URL}/media/slide2.png',
-    f'{SITE_URL}/media/slide3.png',
-    f'{SITE_URL}/media/slide4.png',
+    f'{SITE_URL}/media/help1.png',
+    f'{SITE_URL}/media/help2.png',
+    f'{SITE_URL}/media/help3.png',
+    f'{SITE_URL}/media/help4.png',
 ]
 
 
