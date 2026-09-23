@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateSum() {
-    const sum = items.reduce((acc, it) => acc + (Number(it.price) || 0), 0);
+    const sum = getFilteredItems().reduce((acc, it) => acc + (Number(it.price) || 0), 0);
     sumValueEl.textContent = sum.toLocaleString('ru-RU');
   }
 
