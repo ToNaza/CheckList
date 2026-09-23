@@ -22,19 +22,26 @@
 </head>
 <body>
     <header>
-        <div class="col"> <p class="text_col"><span id="sumValue">0</span><span class="currency-symbol">¤</span></p> </div>
 
-            <form class="search-form" id="searchForm">
-                <div class="row">
-                    <select id="searchPriority" class="box select-box">
-                        <option value="a1" disabled selected>Base</option>
-                        <option value="high">A-Z (A-Я)</option>
-                        <option value="medium">Z-A (Я-А)</option>
-                        <option value="low">Lowest price first↓</option>
-                        <option value="low2">Initially expensive↑</option>
-                    </select>
-                </div>
-            </form>
+        <div class="price-range" id="priceRange">
+            <span class="range-arrow">◂</span>
+            <input type="number" id="priceMin" class="range-input" placeholder="0" min="0">
+            <span class="range-sep">|</span>
+            <input type="number" id="priceMax" class="range-input" placeholder="0" min="0">
+            <span class="range-arrow">▸</span>
+        </div>
+
+        <form class="search-form" id="searchForm">
+            <div class="row">
+                <select id="searchPriority" class="box select-box">
+                    <option value="a1" disabled selected>Base</option>
+                    <option value="high">A-Z (A-Я)</option>
+                    <option value="medium">Z-A (Я-А)</option>
+                    <option value="low">Lowest price first↓</option>
+                    <option value="low2">Initially expensive↑</option>
+                </select>
+            </div>
+        </form>
 
     </header>
 
@@ -48,23 +55,16 @@
                     <p>0000¤</p>
                 </div>
                 <button id="delete"><img src="./media/trash_of.svg"/></button>
-            </div>
-        <div class="block_r">
-                <img id="photo" src="./media/notimg.svg"/>
-                <div class="stovb"> 
-                    <p>Опис Опис Опис Опис Опис Опис Опис Опис</p>
-                    <p>0000¤</p>
-                </div>
-                <button id="delete"><img src="./media/trash_of.svg"/></button>
-            </div> -->
+            </div>-->
         </div>
 
     </main>
 
     <footer>
-
-        <div class="ostrov"> <img id="open" src="./media/plus.svg"/></div>
-
+        <div class="fo">
+            <div class="col"> <p class="text_col"><span id="sumValue">0</span><span class="currency-symbol">¤</span></p> </div>
+            <div class="ostrov"> <img id="open" src="./media/plus.svg"/></div>
+        </div>
     </footer>
 
 <div id="modalOverlay" class="modal-overlay hidden">

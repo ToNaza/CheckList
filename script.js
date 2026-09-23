@@ -202,10 +202,31 @@ document.addEventListener('DOMContentLoaded', () => {
     renderList();
   }
 
+
+
+  // ===== Фильтр по цене =====
+  const priceMinInput = document.getElementById('priceMin');
+  const priceMaxInput = document.getElementById('priceMax');
+
+  priceMinInput.addEventListener('input', renderList);
+  priceMaxInput.addEventListener('input', renderList);
+
+  function getFilteredItems() {
+    const min = priceMinInput.value === '' ? null : Number(priceMinInput.value);
+    const max = priceMaxInput.value === '' ? null : Number(priceMaxInput.value);
+
+    return items.filter((it) => {
+      const price = Number(it.price) || 0;
+      if (min !== null && price < min) return false;
+      if (max !== null && price > max) return false;
+      return true;
+    });
+  }
+
   // ===== Сортировка =====
   function getSortedItems() {
     const mode = sortSelect.value;
-    const arr = [...items];
+    const arr = getFilteredItems();
     switch (mode) {
       case 'high': // A-Я
         arr.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ru'));
@@ -224,6 +245,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return arr;
   }
+
+  
 
   sortSelect.addEventListener('change', renderList);
 
