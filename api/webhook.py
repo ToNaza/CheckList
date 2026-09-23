@@ -22,9 +22,9 @@ HELP_STEPS = [
 def build_keyboard(index):
     buttons = []
     if index > 0:
-        buttons.append({'text': '◀ Back', 'callback_data': f'help:{index - 1}'})
+        buttons.append({'text': '< Back', 'callback_data': f'help:{index - 1}'})
     if index < len(HELP_STEPS) - 1:
-        buttons.append({'text': 'Further ▶', 'callback_data': f'help:{index + 1}'})
+        buttons.append({'text': 'Hext >', 'callback_data': f'help:{index + 1}'})
     return {'inline_keyboard': [buttons]}
 
 
