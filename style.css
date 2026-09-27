@@ -450,3 +450,47 @@ footer{
 .hidden{
     display: none;
 }
+
+
+.item-count{
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.list{
+    .group-block{
+        margin: 10px auto 0;
+        width: 90%;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 14px;
+        padding: 10px;
+
+        .group-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4px 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 8px;
+
+            .group-total{
+                color: greenyellow;
+                font-size: 14px;
+                opacity: 0.9;
+            }
+        }
+
+        .block_r{
+            width: 100%;
+            margin: 8px auto 0;
+        }
+
+        .block_r:first-of-type{
+            margin-top: 0;
+        }
+    }
+}

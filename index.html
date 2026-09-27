@@ -39,6 +39,8 @@
                     <option value="medium">Z-A (Я-А)</option>
                     <option value="low">Lowest price first↓</option>
                     <option value="low2">Initially expensive↑</option>
+                    <option value="groupsOnly">Groups only</option>
+                    <option value="individualOnly">Individual only</option>
                 </select>
             </div>
         </form>
@@ -62,7 +64,7 @@
 
     <footer>
         <div class="fo">
-            <div class="col"> <p class="text_col"><span id="sumValue">0</span><span class="currency-symbol">¤</span></p> </div>
+            <div class="col"> <p class="text_col"><span id="itemCount" class="item-count">0/0</span><span id="sumValue">0</span><span class="currency-symbol">¤</span></p> </div>
             <div class="ostrov"> <img id="open" src="./media/plus.svg"/></div>
         </div>
     </footer>
@@ -112,6 +114,12 @@
             <div class="form-group">
                 <label for="linkInput">Link</label>
                 <input type="url" id="linkInput" placeholder="https://">
+            </div>
+
+            <div class="form-group">
+                <label for="groupInput">Group (optional)</label>
+                <input type="text" id="groupInput" list="groupOptions" placeholder="No group">
+                <datalist id="groupOptions"></datalist>
             </div>
 
             <button type="submit" id="submitBtn" class="submit-btn">Add</button>
