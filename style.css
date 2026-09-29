@@ -71,6 +71,12 @@ header{
     }
 
     .search-form{
+            .row{
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
         .select-box{
             appearance: none;
             -webkit-appearance: none;
@@ -310,6 +316,7 @@ footer{
         }
 
         form{
+
             .form-group{
                 margin-bottom: 16px;
 

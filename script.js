@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sumValueEl = document.getElementById('sumValue');
   const itemCountEl = document.getElementById('itemCount');
   const sortSelect = document.getElementById('searchPriority');
+  const viewModeSelect = document.getElementById('viewMode');
   const priceMinInput = document.getElementById('priceMin');
   const priceMaxInput = document.getElementById('priceMax');
 
@@ -224,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   sortSelect.addEventListener('change', renderList);
+  viewModeSelect.addEventListener('change', renderList);
 
   // ===== Группировка =====
   function groupItems(all) {
@@ -375,7 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== Основной рендер списка =====
   function renderList() {
-    const mode = sortSelect.value;
+    const mode = sortSelect.value;       // сортировка: a1 / high / medium / low / low2
+    const view = viewModeSelect.value;   // вид: all / groupsOnly / individualOnly
     const range = getPriceRange();
     listEl.innerHTML = '';
 
@@ -398,20 +401,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
-    if (mode === 'individualOnly') {
+    if (view === 'individualOnly') {
       // Только записи без группы, диапазон проверяется по каждой отдельно
-      const list = ungrouped.filter((it) => inRange(Number(it.price) || 0, range));
+      let list = ungrouped.filter((it) => inRange(Number(it.price) || 0, range));
+      list = sortItemsByMode(list, mode);
       appendStandalone(list);
 
-    } else if (mode === 'groupsOnly') {
+    } else if (view === 'groupsOnly') {
       // Только группы, диапазон проверяется по сумме всей группы
       let groupEntries = [...groups.entries()]
         .map(([name, arr]) => ({ name, items: arr, total: sumPrices(arr) }))
         .filter((g) => inRange(g.total, range));
+      groupEntries = sortGroupsByMode(groupEntries, mode);
       groupEntries.forEach((g) => appendGroup(g.name, g.items));
 
     } else {
-      // Обычный режим: показываем и группы, и отдельные записи,
+      // "All": показываем и группы, и отдельные записи вместе,
       // диапазон цены проверяется по каждой записи индивидуально
       let groupEntries = [...groups.entries()]
         .map(([name, arr]) => ({

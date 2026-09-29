@@ -32,18 +32,21 @@
         </div>
 
         <form class="search-form" id="searchForm">
-            <div class="row">
-                <select id="searchPriority" class="box select-box">
-                    <option value="a1" disabled selected>Base</option>
-                    <option value="high">A-Z (A-Я)</option>
-                    <option value="medium">Z-A (Я-А)</option>
-                    <option value="low">Lowest price first↓</option>
-                    <option value="low2">Initially expensive↑</option>
-                    <option value="groupsOnly">Groups only</option>
-                    <option value="individualOnly">Individual only</option>
-                </select>
-            </div>
-        </form>
+    <div class="row">
+        <select id="viewMode" class="box select-box">
+            <option value="all" selected>All</option>
+            <option value="groupsOnly">Groups only</option>
+            <option value="individualOnly">Individual only</option>
+        </select>
+        <select id="searchPriority" class="box select-box">
+            <option value="a1" selected>Base</option>
+            <option value="high">A-Z (A-Я)</option>
+            <option value="medium">Z-A (Я-А)</option>
+            <option value="low">Lowest price first↓</option>
+            <option value="low2">Initially expensive↑</option>
+        </select>
+    </div>
+</form>
 
     </header>
 
