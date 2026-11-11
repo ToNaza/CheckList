@@ -516,6 +516,24 @@ document.addEventListener('DOMContentLoaded', () => {
     await loadItems();
   }
 
+<<<<<<< HEAD
+=======
+    // ===== Панель фильтров =====
+  const filterBtn = document.getElementById('filterBtn');
+  const filterPanel = document.getElementById('filterPanel');
+
+  filterBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    filterPanel.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!filterPanel.contains(e.target) && e.target !== filterBtn) {
+      filterPanel.classList.add('hidden');
+    }
+  });
+
+>>>>>>> master
   // ===== Старт =====
   loadItems();
 });
