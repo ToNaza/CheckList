@@ -6,46 +6,70 @@ from http.server import BaseHTTPRequestHandler
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 API_URL = f'https://api.telegram.org/bot{BOT_TOKEN}'
 
-# Домен вашего сайта — оттуда бот берёт картинки инструкции.
-# Файлы должны лежать в папке media/ рядом с index.html, например:
-# media/help1.jpg, media/help2.jpg, media/help3.jpg, media/help4.jpg
-SITE_URL = 'https://wishlistsite.vercel.app'
+# ============================================================
+# ТЕКСТЫ СПРАВКИ — ВПИШИТЕ СВОИ СЮДА
+# Можно использовать HTML-разметку Telegram: <b>жирный</b>, <i>курсив</i>,
+# <code>моно</code>, <a href="https://...">ссылка</a>.
+# Символы < > & в обычном тексте пишите как &lt; &gt; &amp; —
+# но если забудете, бот всё равно отправит текст, просто без разметки.
+# Перенос строки — обычный \n внутри тройных кавычек.
+# ============================================================
+HELP_TEXT = {
+    'en': """<b>Help</b>
 
-HELP_STEPS = [
-    f'{SITE_URL}/media/error.jpg',
-    f'{SITE_URL}/media/error.jpg',
-    f'{SITE_URL}/media/error.jpg',
-    f'{SITE_URL}/media/error.jpg',
+English help text goes here.""",
+
+    'ua': """<b>Довідка</b>
+
+Тут буде текст довідки українською.""",
+}
+
+# Что бот пишет, пока язык ещё не выбран
+CHOOSE_LANGUAGE_TEXT = 'Choose a language / Оберіть мову'
+
+LANGUAGES = [
+    ('en', 'EN'),
+    ('ua', 'UA'),
 ]
 
 
-def build_keyboard(index):
+def build_keyboard(active=None):
+    """Кнопки EN | UA. У выбранного языка стоит галочка."""
     buttons = []
-    if index > 0:
-        buttons.append({'text': '< Back', 'callback_data': f'help:{index - 1}'})
-    if index < len(HELP_STEPS) - 1:
-        buttons.append({'text': 'Hext >', 'callback_data': f'help:{index + 1}'})
+    for code, label in LANGUAGES:
+        text = f'✓ {label}' if code == active else label
+        buttons.append({'text': text, 'callback_data': f'help:{code}'})
     return {'inline_keyboard': [buttons]}
 
 
-def send_photo(chat_id, index):
-    requests.post(f'{API_URL}/sendPhoto', json={
+def send_language_choice(chat_id):
+    requests.post(f'{API_URL}/sendMessage', json={
         'chat_id': chat_id,
-        'photo': HELP_STEPS[index],
-        'reply_markup': build_keyboard(index)
+        'text': CHOOSE_LANGUAGE_TEXT,
+        'reply_markup': build_keyboard(),
     })
 
 
-def edit_photo(chat_id, message_id, index):
-    requests.post(f'{API_URL}/editMessageMedia', json={
+def edit_to_help_text(chat_id, message_id, lang):
+    """Заменяет сообщение с выбором языка на текст справки (кнопки остаются — язык можно переключить)."""
+    payload = {
         'chat_id': chat_id,
         'message_id': message_id,
-        'media': {
-            'type': 'photo',
-            'media': HELP_STEPS[index]
-        },
-        'reply_markup': build_keyboard(index)
-    })
+        'text': HELP_TEXT[lang],
+        'parse_mode': 'HTML',
+        'disable_web_page_preview': True,
+        'reply_markup': build_keyboard(lang),
+    }
+    resp = requests.post(f'{API_URL}/editMessageText', json=payload)
+
+    # Если в тексте сломана HTML-разметка — отправляем тот же текст без разметки
+    if not resp.ok and 'parse entities' in resp.text:
+        payload.pop('parse_mode')
+        resp = requests.post(f'{API_URL}/editMessageText', json=payload)
+
+    # «message is not modified» (нажали уже выбранный язык) — это нормально
+    if not resp.ok and 'not modified' not in resp.text:
+        print('editMessageText failed:', resp.text)
 
 
 def answer_callback(callback_query_id):
@@ -54,25 +78,30 @@ def answer_callback(callback_query_id):
     })
 
 
+def is_help_command(text):
+    # '/help' и '/help@имя_бота' (так команда приходит в группах)
+    first_word = text.strip().split(' ')[0] if text else ''
+    return first_word.split('@')[0] == '/help'
+
+
 def handle_update(update):
-    # Обработка команды /help
     message = update.get('message')
     if message:
-        text = message.get('text', '')
-        if text.startswith('/help'):
-            chat_id = message['chat']['id']
-            send_photo(chat_id, 0)
+        if is_help_command(message.get('text', '')):
+            send_language_choice(message['chat']['id'])
         return
 
-    # Обработка нажатий на кнопки Back / Further
     callback = update.get('callback_query')
     if callback:
         data = callback.get('data', '')
         if data.startswith('help:'):
-            index = int(data.split(':')[1])
-            chat_id = callback['message']['chat']['id']
-            message_id = callback['message']['message_id']
-            edit_photo(chat_id, message_id, index)
+            lang = data.split(':', 1)[1]
+            if lang in HELP_TEXT:
+                edit_to_help_text(
+                    callback['message']['chat']['id'],
+                    callback['message']['message_id'],
+                    lang,
+                )
         answer_callback(callback['id'])
 
 

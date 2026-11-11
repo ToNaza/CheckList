@@ -459,6 +459,60 @@ footer{
                 }
             }
 
+            .group-picker{
+                margin-top: 6px;
+                max-height: 160px;
+                overflow-y: auto;
+                background-color: rgb(17, 24, 39);
+                border: 1px solid rgb(55, 65, 81);
+                border-radius: 8px;
+
+                &.hidden{
+                    display: none;
+                }
+
+                .group-option{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 8px;
+                    width: 100%;
+                    padding: 8px 12px;
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 14px;
+                    text-align: left;
+                    cursor: pointer;
+
+                    &:hover{
+                        background-color: rgba(255, 255, 255, 0.08);
+                    }
+
+                    &.active{
+                        color: rgb(129, 140, 248);
+                    }
+
+                    .group-option-name{
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+
+                    .group-option-count{
+                        flex-shrink: 0;
+                        color: rgb(156, 163, 175);
+                        font-size: 12px;
+                    }
+                }
+
+                .group-empty{
+                    padding: 8px 12px;
+                    color: rgb(156, 163, 175);
+                    font-size: 13px;
+                }
+            }
+
             .submit-btn{
                 width: 100%;
                 background-color: rgb(79, 70, 229);
@@ -523,5 +577,84 @@ footer{
         .block_r:first-of-type{
             margin-top: 0;
         }
+    }
+}
+
+/* ===== Кнопка «+»: не даём телефону показывать меню при удержании ===== */
+footer{
+    .fo{
+        .ostrov{
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+
+            img{
+                -webkit-user-drag: none;
+            }
+        }
+    }
+}
+
+
+/* ===== Режим редактирования (удержание на «+») ===== */
+body.edit-mode{
+    footer .fo .ostrov{
+        background-color: rgb(255, 170, 0);
+    }
+
+    footer .fo .ostrov:hover{
+        background-color: rgb(255, 196, 77);
+    }
+
+    .list .block_r{
+        outline: 1px dashed rgba(255, 170, 0, 0.7);
+        outline-offset: -1px;
+    }
+}
+
+
+/* ===== Перетаскивание блоков ===== */
+.list{
+    .sortable-unit{
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    .block_r img{
+        -webkit-user-drag: none;
+    }
+
+    .drag-ghost{
+        opacity: 0.35;
+    }
+
+    .drag-chosen{
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    }
+}
+
+
+/* ===== Всплывающая подсказка ===== */
+.toast{
+    position: fixed;
+    left: 50%;
+    bottom: 90px;
+    transform: translateX(-50%);
+    z-index: 60;
+    max-width: 90%;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background-color: rgba(24, 24, 24, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s;
+
+    &.show{
+        opacity: 1;
     }
 }
