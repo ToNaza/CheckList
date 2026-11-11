@@ -516,8 +516,6 @@ document.addEventListener('DOMContentLoaded', () => {
     await loadItems();
   }
 
-<<<<<<< HEAD
-=======
     // ===== Панель фильтров =====
   const filterBtn = document.getElementById('filterBtn');
   const filterPanel = document.getElementById('filterPanel');
@@ -533,7 +531,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
->>>>>>> master
   // ===== Старт =====
   loadItems();
 });
