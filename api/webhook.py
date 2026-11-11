@@ -17,11 +17,37 @@ API_URL = f'https://api.telegram.org/bot{BOT_TOKEN}'
 HELP_TEXT = {
     'en': """<b>Help</b>
 
-English help text goes here.""",
+Welcome, you have opened the application guide.
+Let's start with the basics:
+• Creating an entry: To create an entry, tap the green plus icon in the bottom right corner. A window with a form will open, where you can fill in all the necessary details. Please note: price changes will only be visible once you open the entry.
+• Viewing an entry: Tap once on a created entry to open the link you added.
+• Editing an entry: Editing is done by switching modes. Hold down the plus button used to open the creation window to switch to edit mode; hold it down again to exit this mode. To edit entries, tap once on the desired entry to open the editing window.
+• Editing an entry (groups): Groups are used to organize items in one place. To create a group, tap the Group (optional) field when creating or editing an entry. If you have already created a group and want to add an entry to it, tap this field and select the desired one from the dropdown list.
+
+Other features of the mini-app:
+• Bottom panel: To the left of the plus button, you can see two values: gray and green. Green represents the total sum of all selected entries. Gray shows the total number of entries currently visible on your screen (depending on active filters).
+• Filters: You can choose what to display right now by tapping the icon in the top right corner, which opens three filter options:
+Block type: All, groups, or single items.
+Price range: Enter the minimum price in the first field and the maximum in the second.
+Classic sorting: By price or alphabetically (determining what appears first and last).
+• Dragging blocks: You can also rearrange all blocks however you like. Simply hold down the desired entry and drag it to where you want it to appear in the list.""",
 
     'ua': """<b>Довідка</b>
 
-Тут буде текст довідки українською.""",
+Вітаю, ви відкрили гайд із користування застосунком.
+Почнімо з бази:
+• Створення запису: Щоб створити запис, натисніть на зелений плюсик у правому нижньому куті — відкриється вікно з формою, де ви зможете заповнити всі потрібні дані. Але майте на увазі: зміни у ціні ви зможете помітити лише тоді, коли відкриєте свій запис.
+• Перегляд запису: Натисніть 1 раз на створений запис, аби відкрити посилання, яке ви додали.
+• Редагування запису: Редагування відбувається за допомогою перемикання режимів. Затисніть плюсик, яким відкривали вікно створення запису, й таким чином перейдіть у режим редагування. Аби вийти з нього, знову затисніть той самий плюсик. Щоб редагувати записи, натисніть 1 раз на потрібний — вам відкриється вікно редагування.
+• Редагування запису (групи): Групи потрібні, щоб зібрати товари в одному місці. Щоб створити групу, під час створення чи редагування запису натисніть на поле Group (optional). А якщо ви вже створили групу й бажаєте додати до неї запис, затисніть це поле й виберіть потрібну зі спадного списку.
+
+Інші можливості міні-застосунку:
+• Нижня панель: Лівіше від плюсика ви можете бачити два значення — сіре й зелене. Зелене — це загальна сума всіх вибраних записів. Сіре — це загальна кількість записів, які ви бачите на екрані (залежно від установлених фільтрів).
+• Фільтри: Ви можете вибрати, що саме відображати прямо зараз. Натисніть на віконце у правому верхньому куті, і вам відкриється вибір трьох фільтрів:
+Тип блоків: Усі, групи або поодинокі.
+Цінова категорія: у першому полі вказуєте від якої ціни, у другому — до якої.
+Класичне сортування: за ціною або за літерами (що буде стояти першим, а що — останнім).
+• Перетягування блоків: Ви також можете розставити всі блоки так, як вам зручно. Для цього всього лише потрібно затиснути потрібний запис і перетягнути його туди, де ви хочете його бачити у списку.""",
 }
 
 # Что бот пишет, пока язык ещё не выбран
