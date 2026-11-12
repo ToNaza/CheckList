@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const SUPABASE_URL = 'https://uwuqsvlvptldeaesabif.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3dXFzdmx2cHRsZGVhZXNhYmlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNzc0MTUsImV4cCI6MjEwNTY1MzQxNX0.FJPswfe83L57YprUJkSSeyi4u0RMvEXkhnCl9X76RWg';
   const TABLE = 'wishlist_items';
+  const SHARE_TABLE = 'shared_lists';
+
+  // Ссылка на мини-апп из BotFather (/newapp): https://t.me/wishlist9_bot/КОРОТКОЕ_ИМЯ
+  // Замените APP_NAME на короткое имя вашего мини-аппа.
+  const SHARE_APP_LINK = 'https://t.me/wishlist9_bot/APP_NAME';
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -63,6 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const priceMinInput = document.getElementById('priceMin');
   const priceMaxInput = document.getElementById('priceMax');
   const toastEl = document.getElementById('toast');
+  const shareBtn = document.getElementById('sharebtn');
+  const shareHint = document.getElementById('shareHint');
+  const shareCancel = document.getElementById('shareCancel');
+  const viewerNote = document.getElementById('viewerNote');
+  const plusImg = document.getElementById('open');
 
   // ===== Состояние =====
   let items = [];
@@ -74,6 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let editMode = false;
   let lastDragEnd = 0;
   let sortable = null;
+  let shareMode = false;
+  let viewerMode = false;
+  const excluded = new Set(); // id записей, которыми не делимся
 
   // ===== Всплывающая подсказка =====
   let toastTimer = null;
@@ -153,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   plusBtn.addEventListener('pointerdown', () => {
     plusHoldFired = false;
+    if (shareMode || viewerMode) return;
     clearTimeout(plusTimer);
     plusTimer = setTimeout(() => {
       plusHoldFired = true;
@@ -164,6 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   plusBtn.addEventListener('contextmenu', (e) => e.preventDefault());
   plusBtn.addEventListener('click', () => {
+    if (shareMode) return;
+    if (viewerMode) { exitViewer(); return; } // в режиме просмотра на месте «+» стрелка назад
     if (plusHoldFired) return; // это было удержание, а не тап
     openModalForCreate();
   });
@@ -486,7 +502,11 @@ document.addEventListener('DOMContentLoaded', () => {
     card.addEventListener('click', (e) => {
       if (e.target.closest('.delete-btn')) return;
       if (Date.now() - lastDragEnd < 400) return; // клик сразу после перетаскивания игнорируем
-      if (editMode) {
+      if (shareMode) {
+        toggleExcluded([item]);
+        return;
+      }
+      if (editMode && !viewerMode) {
         openModalForEdit(item);
         return;
       }
@@ -514,6 +534,9 @@ document.addEventListener('DOMContentLoaded', () => {
       <span class="group-name">${escapeHtml(name)}</span>
       <span class="group-total">${total}<span class="currency-symbol">¤</span></span>
     `;
+    header.addEventListener('click', () => {
+      if (shareMode) toggleExcluded(groupItemsArr);
+    });
     block.appendChild(header);
 
     groupItemsArr.forEach((item) => {
@@ -586,8 +609,197 @@ document.addEventListener('DOMContentLoaded', () => {
     sumValueEl.textContent = shownSum.toLocaleString('ru-RU');
     if (itemCountEl) itemCountEl.textContent = `${shownCount}/${items.length}`;
 
-    // Перетаскивание имеет смысл только в ручном порядке
-    if (sortable) sortable.option('disabled', !manual);
+    applyShareMarks();
+
+    // Перетаскивание имеет смысл только в ручном порядке (и не при шаринге / просмотре чужого списка)
+    if (sortable) sortable.option('disabled', !manual || shareMode || viewerMode);
+  }
+
+  // ===== Поделиться списком (снимок) =====
+  // Помечаем исключённые записи и группы, у которых исключены все видимые записи
+  function applyShareMarks() {
+    listEl.querySelectorAll('.block_r').forEach((card) => {
+      card.classList.toggle('share-off', shareMode && excluded.has(card.dataset.id));
+    });
+    listEl.querySelectorAll('.group-block').forEach((block) => {
+      const cards = [...block.querySelectorAll('.block_r')];
+      const allOff = cards.length > 0 && cards.every((c) => excluded.has(c.dataset.id));
+      block.classList.toggle('share-off', shareMode && allOff);
+    });
+  }
+
+  // Тап по записи — убрать/вернуть её; тап по заголовку группы — то же для всей группы
+  function toggleExcluded(list) {
+    const ids = list.map((it) => String(it.id));
+    const allOff = ids.every((id) => excluded.has(id));
+    ids.forEach((id) => (allOff ? excluded.delete(id) : excluded.add(id)));
+    haptic('light');
+    applyShareMarks();
+  }
+
+  function enterShareMode() {
+    if (viewerMode || shareMode) return;
+    if (editMode) { editMode = false; document.body.classList.remove('edit-mode'); }
+    filterPanel.classList.add('hidden');
+    excluded.clear();
+    shareMode = true;
+    document.body.classList.add('share-mode');
+    shareHint.classList.remove('hidden');
+    renderList();
+  }
+
+  function exitShareMode() {
+    shareMode = false;
+    excluded.clear();
+    document.body.classList.remove('share-mode');
+    shareHint.classList.add('hidden');
+    shareBtn.disabled = false;
+    renderList();
+  }
+
+  // Что видно на экране (с учётом фильтров и порядка), минус исключённое
+  function buildSnapshot() {
+    const byId = new Map(items.map((it) => [String(it.id), it]));
+    const out = [];
+    [...listEl.children].forEach((unitEl, unitIndex) => {
+      const cards = unitEl.classList.contains('group-block')
+        ? [...unitEl.querySelectorAll('.block_r')]
+        : [unitEl];
+      cards.forEach((card) => {
+        const id = card.dataset.id;
+        if (excluded.has(id)) return;
+        const it = byId.get(id);
+        if (!it) return;
+        out.push({
+          title: it.title || '',
+          price: Number(it.price) || 0,
+          link: it.link || '',
+          photo_url: it.photo_url || null,
+          group_name: (it.group_name || '').trim() || null,
+          sort_order: unitIndex
+        });
+      });
+    });
+    return out;
+  }
+
+  function makeToken() {
+    if (window.crypto?.randomUUID) return crypto.randomUUID().replace(/-/g, '');
+    return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+  }
+
+  // Одна постоянная ссылка на владельца: повторный Share обновляет то, что она показывает
+  async function saveSnapshot(snapshot) {
+    const { data: existing, error: readErr } = await sb
+      .from(SHARE_TABLE)
+      .select('token')
+      .eq('owner_id', userId)
+      .maybeSingle();
+    if (readErr) throw readErr;
+
+    const token = existing?.token || makeToken();
+    const { error } = await sb
+      .from(SHARE_TABLE)
+      .upsert({ owner_id: userId, token, items: snapshot, updated_at: new Date().toISOString() }, { onConflict: 'owner_id' });
+    if (error) throw error;
+    return `${SHARE_APP_LINK}?startapp=${token}`;
+  }
+
+  // Копирование: сначала современный способ (работает и после await), затем запасные
+  async function copyText(linkPromise) {
+    try {
+      if (window.ClipboardItem && navigator.clipboard?.write) {
+        const blob = linkPromise.then((t) => new Blob([t], { type: 'text/plain' }));
+        await navigator.clipboard.write([new ClipboardItem({ 'text/plain': blob })]);
+        return true;
+      }
+    } catch (e) { /* пробуем дальше */ }
+
+    const text = await linkPromise;
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) { /* пробуем дальше */ }
+
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      ta.remove();
+      if (ok) return true;
+    } catch (e) { /* пробуем дальше */ }
+
+    window.prompt('Copy the link:', text);
+    return true;
+  }
+
+  async function finishShare() {
+    const snapshot = buildSnapshot();
+    if (snapshot.length === 0) {
+      showToast('Nothing to share — everything is left out');
+      return;
+    }
+    shareBtn.disabled = true;
+    try {
+      const linkPromise = saveSnapshot(snapshot);
+      linkPromise.catch(() => {}); // ошибку обработаем ниже
+      await copyText(linkPromise);
+      exitShareMode();
+      showToast('Link copied');
+    } catch (err) {
+      console.error(err);
+      shareBtn.disabled = false;
+      showToast('Could not create the link. Try again');
+    }
+  }
+
+  shareBtn.addEventListener('click', () => {
+    if (viewerMode) return;
+    if (!shareMode) enterShareMode();
+    else finishShare();
+  });
+  shareCancel.addEventListener('click', exitShareMode);
+
+  // ===== Просмотр чужого списка (открыт по ссылке) =====
+  function getStartParam() {
+    const fromTg = tg?.initDataUnsafe?.start_param;
+    if (fromTg) return fromTg;
+    const q = new URLSearchParams(location.search);
+    return q.get('startapp') || q.get('tgWebAppStartParam') || '';
+  }
+
+  function enterViewer() {
+    viewerMode = true;
+    document.body.classList.add('viewer-mode');
+    viewerNote.classList.remove('hidden');
+    plusImg.src = './media/undo.svg';
+  }
+
+  async function exitViewer() {
+    viewerMode = false;
+    document.body.classList.remove('viewer-mode');
+    viewerNote.classList.add('hidden');
+    plusImg.src = './media/plus.svg';
+    await loadItems();
+  }
+
+  async function loadShared(token) {
+    if (!/^[A-Za-z0-9_-]{8,128}$/.test(token)) return false;
+    const { data, error } = await sb
+      .from(SHARE_TABLE)
+      .select('items')
+      .eq('token', token)
+      .maybeSingle();
+    if (error || !data || !Array.isArray(data.items)) return false;
+
+    items = data.items.map((it, i) => ({ ...it, id: 's' + i, created_at: null }));
+    enterViewer();
+    renderList();
+    return true;
   }
 
   function escapeHtml(str) {
@@ -736,6 +948,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== Удаление записи =====
   async function deleteItem(id) {
+    if (viewerMode || shareMode) return;
     if (!confirm('Удалить этот элемент?')) return;
     const { error } = await sb.from(TABLE).delete().eq('id', id).eq('user_id', userId);
     if (error) {
@@ -763,5 +976,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== Старт =====
   initSortable();
-  loadItems();
+  (async () => {
+    const token = getStartParam();
+    if (token) {
+      const ok = await loadShared(token);
+      if (ok) return;
+      showToast('Shared list not found');
+    }
+    loadItems();
+  })();
 });
