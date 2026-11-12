@@ -22,7 +22,8 @@ Other features of the mini-app:
 Block type: All, groups, or single items.
 Price range: Enter the minimum price in the first field and the maximum in the second.
 Classic sorting: By price or alphabetically (determining what appears first and last).
-• Dragging blocks: You can also rearrange all blocks however you like. Simply hold down the desired entry and drag it to where you want it to appear in the list.""",
+• Dragging blocks: You can also rearrange all blocks however you like. Simply hold down the desired entry and drag it to where you want it to appear in the list.
+• Sharing the list: You also can share your wishlist with other people by tapping Share in the top left corner. You can exclude certain entries you don't want to share by tapping on them (or tap them a second time if you change your mind). After that, tap Share again to get the link.""",
 
     'ua': """<b>Довідка</b>
 
@@ -39,7 +40,8 @@ Classic sorting: By price or alphabetically (determining what appears first and 
 Тип блоків: Усі, групи або поодинокі.
 Цінова категорія: у першому полі вказуєте від якої ціни, у другому — до якої.
 Класичне сортування: за ціною або за літерами (що буде стояти першим, а що — останнім).
-• Перетягування блоків: Ви також можете розставити всі блоки так, як вам зручно. Для цього всього лише потрібно затиснути потрібний запис і перетягнути його туди, де ви хочете його бачити у списку.""",
+• Перетягування блоків: Ви також можете розставити всі блоки так, як вам зручно. Для цього всього лише потрібно затиснути потрібний запис і перетягнути його туди, де ви хочете його бачити у списку.
+• Поділитись списком: Ви також можете ділитись своїми побажаннями з іншими людьми — для цього натисніть Share у лівому верхньому куті. Ви можете прибрати деякі записи, якими не бажаєте ділитись, натиснувши на них (або повторно натиснувши на запис, якщо передумали). Після цього натисніть Share ще раз, щоб отримати посилання.""",
 }
 
 # Что бот пишет, пока язык ещё не выбран
