@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ссылка на мини-апп из BotFather (/newapp): https://t.me/wishlist9_bot/КОРОТКОЕ_ИМЯ
   // Замените APP_NAME на короткое имя вашего мини-аппа.
-  const SHARE_APP_LINK = 'https://t.me/wishlist9_bot/APP_NAME';
+  const SHARE_APP_LINK = 'https://t.me/wishlist9_bot';
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
