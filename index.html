@@ -23,7 +23,8 @@
 </head>
 <body>
     <header>
-        <button id="sharebtn">Share</button>
+    <button type="button" id="sharebtn" class="share-btn">Share</button>
+    <span id="viewerNote" class="viewer-note hidden">Shared list</span>
     <div class="filter-wrap">
         <button type="button" id="filterBtn" class="filter-btn">Filters ▾</button>
 
@@ -61,6 +62,14 @@
         </div>
     </div>
 </header>
+
+    <div id="shareHint" class="share-hint hidden">
+        <div class="share-hint-text">
+            <p>Натисніть на блок або групу, щоб не ділитися ними. Натисніть повторно «Share», щоб скопіювати посилання.</p>
+            <p>Tap a block or group to leave it out. Tap "Share" again to copy the link.</p>
+        </div>
+        <button type="button" id="shareCancel" class="share-cancel">&times;</button>
+    </div>
 
     <main>
 

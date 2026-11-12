@@ -22,27 +22,6 @@ header{
     display: flex;
     padding: 10px;
 
-    #sharebtn{
-        background-color: rgba(0, 253, 34, 0.096);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-        padding: 4px 24px;
-        font-size: 14px;
-        cursor: pointer;
-        transition-duration: 0.4s;
-    }
-
-    #sharebtn:hover{
-        background-color: rgba(0, 253, 34, 0.2);
-    }
-
-    #sharebtn:active{
-        background-color: rgb(248, 248, 248);
-        color: rgb(0, 0, 0);
-        padding: 0px 12px;
-    }
-
     .filter-wrap{
         position: relative;
         margin-left: auto;
@@ -168,7 +147,6 @@ main{
         border-radius: 20px;
         padding-top: 10px;
         overflow-y: auto;
-        padding-bottom: 10px;
 
         .block_r{
             margin: 10px auto 0;
@@ -678,5 +656,124 @@ body.edit-mode{
 
     &.show{
         opacity: 1;
+    }
+}
+
+/* ===== Поделиться: кнопка, подсказка, режим выбора ===== */
+header{
+    align-items: center;
+
+    .share-btn{
+        background-color: rgba(255, 255, 255, 0.096);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 4px 14px;
+        font-size: 14px;
+        cursor: pointer;
+
+        &:disabled{
+            opacity: 0.5;
+            cursor: default;
+        }
+    }
+
+    .viewer-note{
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 14px;
+
+        &.hidden{
+            display: none;
+        }
+    }
+}
+
+.share-hint{
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: 80%;
+    max-width: 695px;
+    margin: 0 auto 8px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    background-color: rgba(0, 170, 255, 0.12);
+    border: 1px solid rgba(0, 170, 255, 0.5);
+    border-radius: 12px;
+    color: white;
+    font-size: 13px;
+
+    &.hidden{
+        display: none;
+    }
+
+    .share-hint-text{
+        flex: 1;
+
+        p{
+            margin: 0;
+        }
+
+        p + p{
+            margin-top: 4px;
+            opacity: 0.65;
+        }
+    }
+
+    .share-cancel{
+        background: none;
+        border: none;
+        color: white;
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 4px;
+    }
+}
+
+body.share-mode{
+    header .share-btn{
+        background-color: rgb(0, 150, 230);
+        border-color: rgb(0, 150, 230);
+    }
+
+    footer .fo .ostrov{
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    .list{
+        .block_r,
+        .group-block{
+            outline: 1px solid rgba(0, 170, 255, 0.8);
+            outline-offset: -1px;
+            cursor: pointer;
+        }
+
+        .group-header{
+            cursor: pointer;
+        }
+
+        .share-off{
+            opacity: 0.4;
+            outline: 1px dashed rgba(255, 255, 255, 0.35);
+        }
+
+        .delete-btn{
+            display: none !important;
+        }
+    }
+}
+
+
+/* ===== Просмотр чужого списка ===== */
+body.viewer-mode{
+    header .share-btn{
+        display: none;
+    }
+
+    .list .delete-btn{
+        display: none !important;
     }
 }
