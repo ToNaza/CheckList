@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ссылка на мини-апп из BotFather (/newapp): https://t.me/wishlist9_bot/КОРОТКОЕ_ИМЯ
   // Замените APP_NAME на короткое имя вашего мини-аппа.
-  const SHARE_APP_LINK = 'https://t.me/wishlist9_bot';
+  const SHARE_APP_LINK = 'https://t.me/wishlist9_bot/APP_NAME';
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const charCounter = document.getElementById('charCounter');
   const numberInput = document.getElementById('numberInput');
   const linkInput = document.getElementById('linkInput');
+  const priceStatus = document.getElementById('priceStatus');
   const groupInput = document.getElementById('groupInput');
   const groupPicker = document.getElementById('groupPicker');
 
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addForm.reset();
     charCounter.textContent = '0 / 50';
     groupInput.value = '';
+    priceTouched = false; priceReq++; setPriceStatus('');
     closeGroupPicker();
     resetPhotoUI();
     modalTitle.textContent = 'Create a record';
@@ -132,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     linkInput.value = item.link || '';
     groupInput.value = item.group_name || '';
     charCounter.textContent = `${titleInput.value.length} / 50`;
+    priceTouched = false; priceReq++; setPriceStatus('');
     closeGroupPicker();
     resetPhotoUI();
     if (item.photo_url && existingPhotoPreview) {
@@ -183,6 +186,44 @@ document.addEventListener('DOMContentLoaded', () => {
     if (plusHoldFired) return; // это было удержание, а не тап
     openModalForCreate();
   });
+
+  // ===== Автоподстановка цены по ссылке =====
+  // Пробуем достать цену со страницы магазина. Не вышло — просто просим ввести вручную.
+  let priceTouched = false;   // пользователь сам вводил цену — не перезаписываем
+  let priceReq = 0;           // номер последнего запроса, чтобы старый ответ не затёр новый
+
+  function setPriceStatus(text) {
+    if (priceStatus) priceStatus.textContent = text || '';
+  }
+
+  numberInput.addEventListener('input', () => { priceTouched = true; setPriceStatus(''); });
+
+  async function fetchPriceFromLink() {
+    const link = linkInput.value.trim();
+    const myReq = ++priceReq;
+    setPriceStatus('');
+    if (!/^https?:\/\//i.test(link)) return;
+    if (priceTouched || Number(numberInput.value) > 0) return; // цена уже есть
+
+    setPriceStatus('Looking for the price…');
+    let data = null;
+    try {
+      const res = await fetch('/api/price?url=' + encodeURIComponent(link));
+      data = await res.json();
+    } catch (e) { /* сеть или функция недоступны — как будто цену не нашли */ }
+    if (myReq !== priceReq) return;                            // ссылка уже сменилась
+    if (priceTouched || Number(numberInput.value) > 0) { setPriceStatus(''); return; } // успел ввести сам
+
+    if (data && data.price) {
+      numberInput.value = data.price;
+      setPriceStatus('Price filled in from the link — check it');
+    } else {
+      setPriceStatus("Couldn't get the price from this link — please enter it manually");
+    }
+  }
+
+  linkInput.addEventListener('change', fetchPriceFromLink);
+  linkInput.addEventListener('paste', () => setTimeout(fetchPriceFromLink, 0));
 
   // ===== Счётчик символов =====
   titleInput.addEventListener('input', () => {

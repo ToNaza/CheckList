@@ -777,3 +777,19 @@ body.viewer-mode{
         display: none !important;
     }
 }
+
+
+/* ===== Подсказка под полем ссылки ===== */
+.modal-box{
+    .field-hint{
+        display: block;
+        margin-top: 4px;
+        min-height: 0;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.55);
+
+        &:empty{
+            display: none;
+        }
+    }
+}
